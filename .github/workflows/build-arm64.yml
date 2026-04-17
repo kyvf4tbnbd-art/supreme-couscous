@@ -1,0 +1,31 @@
+name: Build ARM64
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-arm64:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build ARM64 binaries
+        run: msbuild RBTray.sln /m /p:Configuration=Release /p:Platform=ARM64 /p:PlatformToolset=v143
+
+      - name: Upload ARM64 artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: rbtray-arm64
+          path: |
+            arm64/RBTray.exe
+            arm64/RBHook.dll
+          if-no-files-found: error
